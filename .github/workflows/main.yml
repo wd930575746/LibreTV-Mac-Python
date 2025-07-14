@@ -1,16 +1,13 @@
-name: Build macOS Universal .app
+name: Build and Release Mac App
 
 on:
   push:
     tags:
-      - 'v*'
-  workflow_dispatch:
+      - 'v*.*.*'
 
-permissions:
-  contents: write
 jobs:
   build-intel:
-    runs-on: macos-latest
+    runs-on: macos-13
     steps:
       - name: 检出代码
         uses: actions/checkout@v4
@@ -32,7 +29,7 @@ jobs:
       - name: 上传 Intel 产物
         uses: actions/upload-artifact@v4
         with:
-          name: dist-intel
+          name: Jeffern影视平台-intel
           path: dist/Jeffern影视平台-intel
 
   build-arm:
@@ -58,7 +55,7 @@ jobs:
       - name: 上传 ARM 产物
         uses: actions/upload-artifact@v4
         with:
-          name: dist-arm
+          name: Jeffern影视平台-arm
           path: dist/Jeffern影视平台-arm
 
   release:
@@ -68,13 +65,13 @@ jobs:
       - name: 下载 Intel 产物
         uses: actions/download-artifact@v4
         with:
-          name: dist-intel
+          name: Jeffern影视平台-intel
           path: dist/
 
       - name: 下载 ARM 产物
         uses: actions/download-artifact@v4
         with:
-          name: dist-arm
+          name: Jeffern影视平台-arm
           path: dist/
 
       - name: 发布 Release
