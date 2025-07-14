@@ -32,7 +32,7 @@ jobs:
       - name: 上传 Intel 产物
         uses: actions/upload-artifact@v4
         with:
-          name: Jeffern影视平台-intel
+          name: dist-intel
           path: dist/Jeffern影视平台-intel
 
   build-arm:
@@ -51,14 +51,14 @@ jobs:
           python -m pip install --upgrade pip
           pip install pyinstaller
 
-      - name: M 芯片版打包
+      - name: ARM 版打包
         run: |
           pyinstaller --noconfirm --onefile --windowed --name "Jeffern影视平台-arm" mac-web.py
 
       - name: 上传 ARM 产物
         uses: actions/upload-artifact@v4
         with:
-          name: Jeffern影视平台-arm
+          name: dist-arm
           path: dist/Jeffern影视平台-arm
 
   release:
@@ -68,13 +68,13 @@ jobs:
       - name: 下载 Intel 产物
         uses: actions/download-artifact@v4
         with:
-          name: Jeffern影视平台-intel
+          name: dist-intel
           path: dist/
 
       - name: 下载 ARM 产物
         uses: actions/download-artifact@v4
         with:
-          name: Jeffern影视平台-arm
+          name: dist-arm
           path: dist/
 
       - name: 发布 Release
