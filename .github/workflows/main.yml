@@ -8,15 +8,14 @@ on:
 
 permissions:
   contents: write
-
 jobs:
   build-intel:
-    runs-on: macos-13
+    runs-on: macos-latest
     steps:
       - name: 检出代码
         uses: actions/checkout@v4
 
-      - name: 设置 Python 环境
+      - name: 安装 Python 3.11
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
@@ -24,21 +23,17 @@ jobs:
       - name: 安装依赖
         run: |
           python -m pip install --upgrade pip
-          pip install pywebview pyinstaller
+          pip install pyinstaller
 
-      - name: 打包 x86_64 .app
+      - name: Intel 版打包
         run: |
-          pyinstaller --windowed --name "Jeffern影视平台" mac-web.py
+          pyinstaller --noconfirm --onefile --windowed --name "Jeffern影视平台-intel" mac-web.py
 
-      - name: 检查 .app 产物
-        run: |
-          ls -lR dist/Jeffern影视平台.app
-
-      - name: 上传 x86_64 .app
+      - name: 上传 Intel 产物
         uses: actions/upload-artifact@v4
         with:
-          name: app-x86_64
-          path: dist/Jeffern影视平台.app
+          name: Jeffern影视平台-intel
+          path: dist/Jeffern影视平台-intel
 
   build-arm:
     runs-on: macos-14
@@ -46,7 +41,7 @@ jobs:
       - name: 检出代码
         uses: actions/checkout@v4
 
-      - name: 设置 Python 环境
+      - name: 安装 Python 3.11
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
@@ -54,72 +49,39 @@ jobs:
       - name: 安装依赖
         run: |
           python -m pip install --upgrade pip
-          pip install pywebview pyinstaller
+          pip install pyinstaller
 
-      - name: 打包 arm64 .app
+      - name: M 芯片版打包
         run: |
-          pyinstaller --windowed --name "Jeffern影视平台" mac-web.py
+          pyinstaller --noconfirm --onefile --windowed --name "Jeffern影视平台-arm" mac-web.py
 
-      - name: 检查 .app 产物
-        run: |
-          ls -lR dist/Jeffern影视平台.app
-
-      - name: 上传 arm64 .app
+      - name: 上传 ARM 产物
         uses: actions/upload-artifact@v4
         with:
-          name: app-arm64
-          path: dist/Jeffern影视平台.app
+          name: Jeffern影视平台-arm
+          path: dist/Jeffern影视平台-arm
 
-  merge-universal-app:
+  release:
     needs: [build-intel, build-arm]
-    runs-on: macos-14
+    runs-on: ubuntu-latest
     steps:
-      - name: 下载 x86_64 .app
+      - name: 下载 Intel 产物
         uses: actions/download-artifact@v4
         with:
-          name: app-x86_64
-          path: x86_64
+          name: Jeffern影视平台-intel
+          path: dist/
 
-      - name: 下载 arm64 .app
+      - name: 下载 ARM 产物
         uses: actions/download-artifact@v4
         with:
-          name: app-arm64
-          path: arm64
+          name: Jeffern影视平台-arm
+          path: dist/
 
-      - name: 列出 x86_64 .app 目录结构
-        run: |
-          ls -lR x86_64
-
-      - name: 列出 arm64 .app 目录结构
-        run: |
-          ls -lR arm64
-
-      - name: 合并为 Universal 可执行文件
-        run: |
-          lipo -create -output Jeffern影视平台_universal_bin \
-            "x86_64/Jeffern影视平台.app/Contents/MacOS/Jeffern影视平台" \
-            "arm64/Jeffern影视平台.app/Contents/MacOS/Jeffern影视平台"
-          file Jeffern影视平台_universal_bin
-
-      - name: 复制 .app 目录并替换可执行文件
-        run: |
-          cp -R "x86_64/Jeffern影视平台.app" Jeffern影视平台_universal.app
-          cp Jeffern影视平台_universal_bin Jeffern影视平台_universal.app/Contents/MacOS/Jeffern影视平台
-
-      - name: 压缩 Universal .app 包
-        run: |
-          ditto -c -k --sequesterRsrc --keepParent Jeffern影视平台_universal.app Jeffern影视平台_universal.app.zip
-
-      - name: 上传 Universal .app zip
-        uses: actions/upload-artifact@v4
-        with:
-          name: Jeffern影视平台-mac-universal-app
-          path: Jeffern影视平台_universal.app.zip
-
-      - name: 自动发布 Release（仅在 tag 推送时）
-        if: startsWith(github.ref, 'refs/tags/')
+      - name: 发布 Release
         uses: softprops/action-gh-release@v2
         with:
-          files: Jeffern影视平台_universal.app.zip
+          files: |
+            dist/Jeffern影视平台-intel
+            dist/Jeffern影视平台-arm
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
