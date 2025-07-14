@@ -1,22 +1,21 @@
+当然可以，以下是优化排版后的 README，整体结构更清晰，排版更美观，适合直接用于 GitHub：
+
 ---
 
 # Jeffern影视平台 MAC端
 
-Jeffern影视平台是一个基于 Python + PyWebview 的桌面端影视聚合浏览器，支持自定义视频源，界面美观，操作简单。  
-主要是为https://github.com/jeffernn/LibreTV     此项目制作（本人并未此项目相关人员，此软件编写的目的仅为方便本人使用）
-下方为软件主要界面截图：
+Jeffern影视平台是一个基于 **Python + PyWebview** 的桌面端影视聚合浏览器，支持自定义视频源，界面美观，操作简单。  
+本软件主要为 [LibreTV](https://github.com/jeffernn/LibreTV) 项目制作（本人并非该项目相关人员，软件仅为个人使用而开发）。
+
+---
 
 ## 软件截图
 
-设置页：
-<img width="1126" height="715" alt="image" src="https://github.com/user-attachments/assets/c240d0b2-ec7e-40b4-b8b2-9bd0a0044f17" />
+**设置页：**  
+<img width="560" alt="设置页" src="https://github.com/user-attachments/assets/c240d0b2-ec7e-40b4-b8b2-9bd0a0044f17" />
 
-
-
-主界面：
-<img width="1296" height="843" alt="image" src="https://github.com/user-attachments/assets/077ee0eb-0b43-4252-ad54-802d8642b07f" />
-
-
+**主界面：**  
+<img width="650" alt="主界面" src="https://github.com/user-attachments/assets/077ee0eb-0b43-4252-ad54-802d8642b07f" />
 
 ---
 
@@ -91,3 +90,5 @@ python mac-web.py
 - 如有问题或建议，欢迎提交 Issue。
 
 ---
+
+如需进一步美化或英文版，欢迎随时告知！
