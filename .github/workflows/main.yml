@@ -26,11 +26,17 @@ jobs:
         run: |
           pyinstaller --noconfirm --onefile --windowed --name "Jeffern影视平台-intel" mac-web.py
 
+      - name: 打包为 zip（保留权限）
+        run: |
+          cd dist
+          chmod +x Jeffern影视平台-intel
+          zip Jeffern影视平台-intel-macos-x86_64.zip Jeffern影视平台-intel
+
       - name: 上传 Intel 产物
         uses: actions/upload-artifact@v4
         with:
           name: Jeffern影视平台-intel
-          path: dist/Jeffern影视平台-intel
+          path: dist/Jeffern影视平台-intel-macos-x86_64.zip
 
   build-arm:
     runs-on: macos-14
@@ -52,11 +58,17 @@ jobs:
         run: |
           pyinstaller --noconfirm --onefile --windowed --name "Jeffern影视平台-arm" mac-web.py
 
+      - name: 打包为 zip（保留权限）
+        run: |
+          cd dist
+          chmod +x Jeffern影视平台-arm
+          zip Jeffern影视平台-arm-macos-arm64.zip Jeffern影视平台-arm
+
       - name: 上传 ARM 产物
         uses: actions/upload-artifact@v4
         with:
           name: Jeffern影视平台-arm
-          path: dist/Jeffern影视平台-arm
+          path: dist/Jeffern影视平台-arm-macos-arm64.zip
 
   release:
     needs: [build-intel, build-arm]
@@ -78,7 +90,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            dist/Jeffern影视平台-intel
-            dist/Jeffern影视平台-arm
+            dist/Jeffern影视平台-intel-macos-x86_64.zip
+            dist/Jeffern影视平台-arm-macos-arm64.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
