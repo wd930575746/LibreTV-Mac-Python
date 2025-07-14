@@ -62,7 +62,7 @@ jobs:
           name: app-arm64
           path: dist/Jeffern影视平台
 
-  merge-universal:
+    merge-universal:
     needs: [build-intel, build-arm]
     runs-on: macos-14
     steps:
@@ -92,6 +92,9 @@ jobs:
       - name: 自动发布 Release
         uses: softprops/action-gh-release@v2
         with:
-          files: Jeffern影视平台_universal
+          files: |
+            Jeffern影视平台_universal
+            x86_64/Jeffern影视平台
+            arm64/Jeffern影视平台
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
