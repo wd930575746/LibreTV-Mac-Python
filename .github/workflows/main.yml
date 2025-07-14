@@ -1,89 +1,45 @@
-name: Build and Release Mac App
+name: Build macOS App (Intel & Apple Silicon)
 
 on:
   push:
-    tags:
-      - 'v*.*.*'
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
 
 jobs:
-  build-intel:
-    runs-on: macos-13
+  build-mac:
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      matrix:
+        include:
+          - arch: x86_64
+            runner: macos-12
+            artifact: Jeffern影视平台-x86_64
+          - arch: arm64
+            runner: macos-14
+            artifact: Jeffern影视平台-arm64
+
     steps:
       - name: 检出代码
         uses: actions/checkout@v4
 
-      - name: 安装 Python 3.11
+      - name: 设置 Python 环境
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: '3.10'
 
       - name: 安装依赖
         run: |
           python -m pip install --upgrade pip
-          pip install pyinstaller
+          pip install pyinstaller webview
 
-      - name: Intel 版打包 .app
+      - name: 打包应用
         run: |
-          pyinstaller --noconfirm --windowed --name "Jeffern影视平台-intel" mac-web.py
+          pyinstaller --noconfirm --onefile --windowed --name "Jeffern影视平台" mac-web.py
 
-      - name: 上传 dist 目录（Intel）
+      - name: 上传打包产物
         uses: actions/upload-artifact@v4
         with:
-          name: dist-intel
-          path: dist
-
-  build-arm:
-    runs-on: macos-14
-    steps:
-      - name: 检出代码
-        uses: actions/checkout@v4
-
-      - name: 安装 Python 3.11
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-
-      - name: 安装依赖
-        run: |
-          python -m pip install --upgrade pip
-          pip install pyinstaller
-
-      - name: ARM 版打包 .app
-        run: |
-          pyinstaller --noconfirm --windowed --name "Jeffern影视平台-arm" mac-web.py
-
-      - name: 上传 dist 目录（ARM）
-        uses: actions/upload-artifact@v4
-        with:
-          name: dist-arm
-          path: dist
-
-  release:
-    needs: [build-intel, build-arm]
-    runs-on: ubuntu-latest
-    steps:
-      - name: 下载 Intel dist 目录
-        uses: actions/download-artifact@v4
-        with:
-          name: dist-intel
-          path: dist-intel
-
-      - name: 下载 ARM dist 目录
-        uses: actions/download-artifact@v4
-        with:
-          name: dist-arm
-          path: dist-arm
-
-      - name: 打包所有 dist 目录为 zip
-        run: |
-          zip -r Jeffern影视平台-intel-dist.zip dist-intel
-          zip -r Jeffern影视平台-arm-dist.zip dist-arm
-
-      - name: 发布 Release
-        uses: softprops/action-gh-release@v2
-        with:
-          files: |
-            Jeffern影视平台-intel-dist.zip
-            Jeffern影视平台-arm-dist.zip
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          name: ${{ matrix.artifact }}
+          path: dist/*
