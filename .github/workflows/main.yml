@@ -83,6 +83,11 @@ jobs:
           lipo -create -output Jeffern影视平台_universal x86_64/Jeffern影视平台 arm64/Jeffern影视平台
           file Jeffern影视平台_universal
 
+      - name: 重命名产物
+        run: |
+          cp x86_64/Jeffern影视平台 Jeffern影视平台_x86_64
+          cp arm64/Jeffern影视平台 Jeffern影视平台_arm64
+
       - name: 上传 Universal 产物
         uses: actions/upload-artifact@v4
         with:
@@ -95,7 +100,7 @@ jobs:
         with:
           files: |
             Jeffern影视平台_universal
-            x86_64/Jeffern影视平台
-            arm64/Jeffern影视平台
+            Jeffern影视平台_x86_64
+            Jeffern影视平台_arm64
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
