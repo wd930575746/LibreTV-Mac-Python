@@ -1,9 +1,9 @@
-name: Build macOS Universal App
+name: Build macOS Universal .app
 
 on:
   push:
     tags:
-      - 'v*'   # 推送 tag 时自动发布 Release
+      - 'v*'
   workflow_dispatch:
 
 permissions:
@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   build-intel:
-    runs-on: macos-13  # Intel 架构
+    runs-on: macos-13
     steps:
       - name: 检出代码
         uses: actions/checkout@v4
@@ -26,18 +26,18 @@ jobs:
           python -m pip install --upgrade pip
           pip install pywebview pyinstaller
 
-      - name: 打包 x86_64 应用
+      - name: 打包 x86_64 .app
         run: |
-          pyinstaller --onefile --windowed --name "Jeffern影视平台" mac-web.py
+          pyinstaller --windowed --name "Jeffern影视平台" mac-web.py
 
-      - name: 上传 x86_64 产物
+      - name: 上传 x86_64 .app
         uses: actions/upload-artifact@v4
         with:
           name: app-x86_64
-          path: dist/Jeffern影视平台
+          path: dist/Jeffern影视平台.app
 
   build-arm:
-    runs-on: macos-14  # Apple Silicon (arm64)
+    runs-on: macos-14
     steps:
       - name: 检出代码
         uses: actions/checkout@v4
@@ -52,55 +52,58 @@ jobs:
           python -m pip install --upgrade pip
           pip install pywebview pyinstaller
 
-      - name: 打包 arm64 应用
+      - name: 打包 arm64 .app
         run: |
-          pyinstaller --onefile --windowed --name "Jeffern影视平台" mac-web.py
+          pyinstaller --windowed --name "Jeffern影视平台" mac-web.py
 
-      - name: 上传 arm64 产物
+      - name: 上传 arm64 .app
         uses: actions/upload-artifact@v4
         with:
           name: app-arm64
-          path: dist/Jeffern影视平台
+          path: dist/Jeffern影视平台.app
 
-  merge-universal:
+  merge-universal-app:
     needs: [build-intel, build-arm]
     runs-on: macos-14
     steps:
-      - name: 下载 x86_64 产物
+      - name: 下载 x86_64 .app
         uses: actions/download-artifact@v4
         with:
           name: app-x86_64
           path: x86_64
 
-      - name: 下载 arm64 产物
+      - name: 下载 arm64 .app
         uses: actions/download-artifact@v4
         with:
           name: app-arm64
           path: arm64
 
-      - name: 合并为 Universal 二进制
+      - name: 合并为 Universal 可执行文件
         run: |
-          lipo -create -output Jeffern影视平台_universal x86_64/Jeffern影视平台 arm64/Jeffern影视平台
-          file Jeffern影视平台_universal
+          lipo -create -output Jeffern影视平台_universal_bin \
+            x86_64/Jeffern影视平台.app/Contents/MacOS/Jeffern影视平台 \
+            arm64/Jeffern影视平台.app/Contents/MacOS/Jeffern影视平台
+          file Jeffern影视平台_universal_bin
 
-      - name: 重命名产物
+      - name: 复制 .app 目录并替换可执行文件
         run: |
-          cp x86_64/Jeffern影视平台 Jeffern影视平台_x86_64
-          cp arm64/Jeffern影视平台 Jeffern影视平台_arm64
+          cp -R x86_64/Jeffern影视平台.app Jeffern影视平台_universal.app
+          cp Jeffern影视平台_universal_bin Jeffern影视平台_universal.app/Contents/MacOS/Jeffern影视平台
 
-      - name: 上传 Universal 产物
+      - name: 压缩 Universal .app 包
+        run: |
+          ditto -c -k --sequesterRsrc --keepParent Jeffern影视平台_universal.app Jeffern影视平台_universal.app.zip
+
+      - name: 上传 Universal .app zip
         uses: actions/upload-artifact@v4
         with:
-          name: Jeffern影视平台-mac-universal
-          path: Jeffern影视平台_universal
+          name: Jeffern影视平台-mac-universal-app
+          path: Jeffern影视平台_universal.app.zip
 
       - name: 自动发布 Release（仅在 tag 推送时）
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
         with:
-          files: |
-            Jeffern影视平台_universal
-            Jeffern影视平台_x86_64
-            Jeffern影视平台_arm64
+          files: Jeffern影视平台_universal.app.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
