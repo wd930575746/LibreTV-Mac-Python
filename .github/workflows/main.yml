@@ -5,6 +5,9 @@ on:
     tags:
       - 'v*'   # 推送 tag 时自动发布 Release
   workflow_dispatch:
+  
+permissions:
+  contents: write
 
 jobs:
   build-intel:
