@@ -30,6 +30,10 @@ jobs:
         run: |
           pyinstaller --windowed --name "Jeffern影视平台" mac-web.py
 
+      - name: 检查 .app 产物
+        run: |
+          ls -lR dist/Jeffern影视平台.app
+
       - name: 上传 x86_64 .app
         uses: actions/upload-artifact@v4
         with:
@@ -56,6 +60,10 @@ jobs:
         run: |
           pyinstaller --windowed --name "Jeffern影视平台" mac-web.py
 
+      - name: 检查 .app 产物
+        run: |
+          ls -lR dist/Jeffern影视平台.app
+
       - name: 上传 arm64 .app
         uses: actions/upload-artifact@v4
         with:
@@ -78,16 +86,24 @@ jobs:
           name: app-arm64
           path: arm64
 
+      - name: 列出 x86_64 .app 目录结构
+        run: |
+          ls -lR x86_64
+
+      - name: 列出 arm64 .app 目录结构
+        run: |
+          ls -lR arm64
+
       - name: 合并为 Universal 可执行文件
         run: |
           lipo -create -output Jeffern影视平台_universal_bin \
-            x86_64/Jeffern影视平台.app/Contents/MacOS/Jeffern影视平台 \
-            arm64/Jeffern影视平台.app/Contents/MacOS/Jeffern影视平台
+            "x86_64/Jeffern影视平台.app/Contents/MacOS/Jeffern影视平台" \
+            "arm64/Jeffern影视平台.app/Contents/MacOS/Jeffern影视平台"
           file Jeffern影视平台_universal_bin
 
       - name: 复制 .app 目录并替换可执行文件
         run: |
-          cp -R x86_64/Jeffern影视平台.app Jeffern影视平台_universal.app
+          cp -R "x86_64/Jeffern影视平台.app" Jeffern影视平台_universal.app
           cp Jeffern影视平台_universal_bin Jeffern影视平台_universal.app/Contents/MacOS/Jeffern影视平台
 
       - name: 压缩 Universal .app 包
