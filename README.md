@@ -1,9 +1,9 @@
 ---
 
 # Jeffern影视平台（LibreTV） MAC端 -（Python版）
-请优先移步到[Objective-C版本](https://github.com/jeffernn/LibreTV-Mac-Objective-C)) 
-Jeffern影视平台是一个基于 **Python + PyWebview** 的桌面端影视封装软件，支持自定义视频源，界面美观，操作简单。  
-软件主要为 [LibreTV](https://github.com/jeffernn/LibreTV) 项目制作（本人并非引用项目相关制作人员，制作本软件的初心是方便本人使用）
+-请优先移步到[Objective-C版本](https://github.com/jeffernn/LibreTV-Mac-Objective-C)) 此版本修复所有已知BUG极其优化运行效率
+-Jeffern影视平台是一个基于 **Python + PyWebview** 的桌面端影视封装软件，支持自定义视频源，界面美观，操作简单。  
+-软件主要为 [LibreTV](https://github.com/jeffernn/LibreTV) 项目制作（本人并非引用项目相关制作人员，制作本软件的初心是方便本人使用）
 
 ---
 
