@@ -1,48 +1,69 @@
-name: 打包多架构Python程序
+name: Build macOS App (Intel & Apple Silicon)
 
 on:
   push:
-    branches: [ main ]  # 触发条件：main分支有推送时运行
-  pull_request:
-    branches: [ main ]
+    tags:
+      - 'v*'
+  workflow_dispatch:
 
 jobs:
-  build:
+  build-macos:
+    runs-on: macos-latest
     strategy:
       matrix:
-        # 定义两个运行环境：Intel（macos-13）和M芯片（macos-14）
-        os: [macos-13, macos-14]
-        python-version: ["3.11"]  # 指定Python版本
-
-    runs-on: ${{ matrix.os }}  # 基于矩阵参数选择运行环境
+        arch: [x86_64, arm64]
+    env:
+      APP_NAME: Jeffern影视平台
+      PY_FILE: mac-web.py
 
     steps:
-      - name: 拉取代码
-        uses: actions/checkout@v4
+      - name: 检出代码
+        uses: actions/checkout@v3
 
-      - name: 安装Python
-        uses: actions/setup-python@v5
+      - name: 设置 Python 环境
+        uses: actions/setup-python@v4
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: '3.10'
 
       - name: 安装依赖
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt  # 安装项目依赖
-          pip install pyinstaller  # 安装PyInstaller
+          pip install pyinstaller
 
-      - name: 打包程序
+      - name: 打包应用
         run: |
-          # 根据运行环境定义输出文件名（区分架构）
-          if [ "${{ matrix.os }}" = "macos-13" ]; then
-            ARCH="intel"
-          else
-            ARCH="m_chip"
-          fi
-          pyinstaller --onefile --name "your_app_${ARCH}" your_script.py  # 替换为你的脚本名
+          export ARCH="${{ matrix.arch }}"
+          pyinstaller --noconfirm --onefile --windowed --name "${APP_NAME}-${ARCH}" "${PY_FILE}"
 
-      - name: 上传打包产物
-        uses: actions/upload-artifact@v4
+      - name: 打包产物压缩（包含所有文件）
+        run: |
+          mkdir -p dist_upload
+          # 将dist目录下所有以APP_NAME-ARCH开头的文件和目录全部打包
+          cd dist
+          zip -r "../dist_upload/${APP_NAME}-${{ matrix.arch }}.zip" "${APP_NAME}-${{ matrix.arch }}"*
+          cd ..
+
+      - name: 上传构建产物
+        uses: actions/upload-artifact@v3
         with:
-          name: your_app_${{ matrix.os }}
-          path: dist/  # 上传dist目录下的可执行文件
+          name: "${{ env.APP_NAME }}-${{ matrix.arch }}"
+          path: dist_upload/*.zip
+
+  release:
+    needs: build-macos
+    runs-on: ubuntu-latest
+    steps:
+      - name: 下载所有构建产物
+        uses: actions/download-artifact@v3
+        with:
+          path: all_dist
+
+      - name: 展示产物
+        run: ls -R all_dist
+
+      - name: 上传到 GitHub Releases
+        uses: softprops/action-gh-release@v1
+        with:
+          files: all_dist/**/*.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
