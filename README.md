@@ -36,7 +36,7 @@ pip install pywebview
 
 ## 打包为独立应用
 
-推荐使用 [PyInstaller](https://www.pyinstaller.org/) 进行打包：
+- 推荐使用 [PyInstaller](https://www.pyinstaller.org/) 进行打包：
 
 1. 安装 PyInstaller：
 
@@ -55,7 +55,7 @@ pip install pywebview
    - `--name`：指定应用名称
 
 3. 打包完成后，在 `dist` 目录下会生成可执行文件（.app结尾）。
-4. 可使用github action自动打包（打包后的为通用类型即M芯片与Intel均可运行，打包后运行.app结尾应用，其他文件均可删除）。
+- 可使用github action自动打包（打包后的为通用类型即M芯片与Intel均可运行，打包后运行.app结尾应用，其他文件均可删除）。
 ---
 
 ## 配置文件说明
