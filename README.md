@@ -2,7 +2,7 @@
 
 # Jeffern影视平台 MAC端
 
-Jeffern影视平台是一个基于 **Python + PyWebview** 的桌面端影视聚合浏览器，支持自定义视频源，界面美观，操作简单。  
+Jeffern影视平台是一个基于 **Python + PyWebview** 的桌面端影视封装软件，支持自定义视频源，界面美观，操作简单。  
 本软件主要为 [LibreTV](https://github.com/jeffernn/LibreTV) 项目制作（本人并非该项目相关制作人员，制作本软件的初心是方便本人使用）
 
 ---
