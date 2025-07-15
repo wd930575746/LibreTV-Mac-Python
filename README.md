@@ -76,4 +76,5 @@ pip install pywebview
 - 如有问题或建议，欢迎提交 Issue。
 - 若要分支项目请引用本项目为出处，喜欢的话欢迎给个Star～
 - 目前软件有两个小BUG欢迎大佬fork修复（无法保存网站的cookies缓存和全屏后右侧滑动条无法自动隐藏）
+- 目前已经修复两个已知BUG，请移步https://github.com/jeffernn/LibreTV-Mac-Objective-C
 ---
