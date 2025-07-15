@@ -26,11 +26,6 @@
 
 ## 依赖的第三方包
 
-本项目主要依赖以下第三方库：
-
-- [pywebview](https://github.com/r0x0r/pywebview)  
-  用于创建原生桌面窗口并嵌入网页内容。
-
 相关依赖：
 
 ```bash
