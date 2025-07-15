@@ -31,12 +31,13 @@ jobs:
         run: |
           rm -rf build dist __pycache__ *.spec
 
-      - name: 打包 Universal2 应用
+      - name: 打包 Universal2 应用（带图标）
         run: |
           pyinstaller --clean --noconfirm --onefile --windowed \
             --name "${APP_NAME}-universal2" \
             --target-arch universal2 \
             --hidden-import pywebview \
+            --icon appicon.icns \
             "${PY_FILE}"
 
       - name: 打包产物压缩（包含所有文件）
