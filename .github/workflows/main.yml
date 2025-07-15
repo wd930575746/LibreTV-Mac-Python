@@ -38,13 +38,12 @@ jobs:
       - name: 打包产物压缩（包含所有文件）
         run: |
           mkdir -p dist_upload
-          # 将dist目录下所有以APP_NAME-ARCH开头的文件和目录全部打包
           cd dist
           zip -r "../dist_upload/${APP_NAME}-${{ matrix.arch }}.zip" "${APP_NAME}-${{ matrix.arch }}"*
           cd ..
 
       - name: 上传构建产物
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: "${{ env.APP_NAME }}-${{ matrix.arch }}"
           path: dist_upload/*.zip
@@ -54,7 +53,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: 下载所有构建产物
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           path: all_dist
 
