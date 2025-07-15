@@ -1,4 +1,4 @@
-name: Build macOS App (Intel & Apple Silicon)
+name: Build macOS App (Universal2)
 
 on:
   push:
@@ -9,9 +9,6 @@ on:
 jobs:
   build-macos:
     runs-on: macos-latest
-    strategy:
-      matrix:
-        arch: [x86_64, arm64]
     env:
       APP_NAME: Jeffern影视平台
       PY_FILE: mac-web.py
@@ -30,22 +27,21 @@ jobs:
           python -m pip install --upgrade pip
           pip install pyinstaller
 
-      - name: 打包应用
+      - name: 打包 Universal2 应用
         run: |
-          export ARCH="${{ matrix.arch }}"
-          pyinstaller --noconfirm --onefile --windowed --name "${APP_NAME}-${ARCH}" "${PY_FILE}"
+          pyinstaller --noconfirm --onefile --windowed --name "${APP_NAME}-universal2" --target-arch universal2 "${PY_FILE}"
 
       - name: 打包产物压缩（包含所有文件）
         run: |
           mkdir -p dist_upload
           cd dist
-          zip -r "../dist_upload/${APP_NAME}-${{ matrix.arch }}.zip" "${APP_NAME}-${{ matrix.arch }}"*
+          zip -r "../dist_upload/${APP_NAME}-universal2.zip" "${APP_NAME}-universal2"*
           cd ..
 
       - name: 上传构建产物
         uses: actions/upload-artifact@v4
         with:
-          name: "${{ env.APP_NAME }}-${{ matrix.arch }}"
+          name: "${{ env.APP_NAME }}-universal2"
           path: dist_upload/*.zip
 
   release:
